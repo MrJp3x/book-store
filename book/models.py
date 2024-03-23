@@ -1,7 +1,8 @@
 from django.db import models
+from utils.models import TimeStamp
 
 
-class Author(models.Model):
+class Author(TimeStamp):
     first_name = models.CharField(max_length=512)
     last_name = models.CharField(max_length=512)
     phone = models.CharField(max_length=512, blank=True, null=True)
@@ -9,7 +10,7 @@ class Author(models.Model):
     description = models.CharField(max_length=512, blank=True, null=True)
 
 
-class BookCategory(models.Model):
+class BookCategory(TimeStamp):
     category = models.CharField(max_length=255)
     description = models.TextField(blank=True)
 
@@ -17,10 +18,10 @@ class BookCategory(models.Model):
         return self.category
 
 
-class Book(models.Model):
+class Book(TimeStamp):
     name = models.CharField(max_length=512, unique=True)
     title = models.CharField(max_length=512)
-    author = models.ForeignKey(Author, on_delete=models.SET_NULL, null=True)
+    book_author = models.ForeignKey(Author, on_delete=models.SET_NULL, null=True, related_name='books_written')
     category = models.ManyToManyField(BookCategory)
     online_price = models.PositiveIntegerField()
     physical_price = models.PositiveIntegerField()
