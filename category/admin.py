@@ -3,8 +3,7 @@ from .models import Category
 
 
 class BaseCategoryAdmin(admin.ModelAdmin):
-    list_display = ['id',
-                    'name',
+    list_display = ['name',
                     'parent',
                     ]
     list_filter = ('parent',)
@@ -20,7 +19,7 @@ class BaseCategoryAdmin(admin.ModelAdmin):
 
 
 class CategoryAdmin(BaseCategoryAdmin):
-    list_display = BaseCategoryAdmin.list_display + ["category_hierarchy"]
+    list_display = BaseCategoryAdmin.list_display + ["category_hierarchy", 'id']
 
     def category_hierarchy(self, obj):
         """
