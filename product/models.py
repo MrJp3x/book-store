@@ -12,5 +12,7 @@ class Product(models.Model):
     rating = models.FloatField(blank=True, null=True)
     quantity = models.IntegerField(blank=True, null=True, default=0)
 
+
+
     def __str__(self):
         return f'{self.category} / {self.name} / {self.quantity}'
