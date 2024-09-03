@@ -17,7 +17,7 @@ class User(AbstractUser):
         return self.username
 
     def save(self, *args, **kwargs):
-        if self.role == 'publisher':  # todo: hard code
+        if self.role == UserConst.PUBLISHER:
             self.is_admin = True
         else:
             self.is_admin = False
