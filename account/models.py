@@ -16,11 +16,12 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
+    def __init__(self, *args, **kwargs):
+        super(User, self).__init__(*args, **kwargs)
+        self.is_admin = False
+
     def save(self, *args, **kwargs):
-        if self.role == UserConst.PUBLISHER:
-            self.is_admin = True
-        else:
-            self.is_admin = False
+        self.is_admin = self.role == UserConst.PUBLISHER
         super(User, self).save(*args, **kwargs)
 
     class Meta:
