@@ -11,7 +11,9 @@ class User(AbstractUser):
 
     role = models.CharField(max_length=20, choices=UserConst.choices)
     phone = models.CharField(max_length=11, blank=True, null=True)
+    is_phone_verified = models.BooleanField(default=False)
     email = models.EmailField(blank=True, null=True)
+    is_email_verified = models.BooleanField(default=False)
 
     def __str__(self):
         return self.username
