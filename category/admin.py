@@ -1,10 +1,11 @@
 from django.contrib import admin
-from .models import Category
+from .models import Category, BaseCategory
 
 
-class BaseCategoryAdmin(admin.ModelAdmin):
+class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name',
                     'parent',
+                    'category_hierarchy'
                     ]
     list_filter = ('parent',)
     search_fields = ('name',)
@@ -16,10 +17,7 @@ class BaseCategoryAdmin(admin.ModelAdmin):
         css = {
             'all': ('css/admin_custom.css',)
         }
-
-
-class CategoryAdmin(BaseCategoryAdmin):
-    list_display = BaseCategoryAdmin.list_display + ["category_hierarchy", 'id']
+    # list_display = BaseCategoryAdmin.list_display + ["category_hierarchy", 'id']
 
     def category_hierarchy(self, obj):
         """
@@ -40,4 +38,9 @@ class CategoryAdmin(BaseCategoryAdmin):
         return queryset.order_by('parent__id', 'id')
 
 
+class BaseCategoryAdmin(admin.ModelAdmin):
+    list_display = ['name']
+
+
+admin.site.register(BaseCategory, BaseCategoryAdmin)
 admin.site.register(Category, CategoryAdmin)
