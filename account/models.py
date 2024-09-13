@@ -3,8 +3,14 @@ from django.db import models
 
 
 class User(AbstractUser):
+    first_name = None
+    last_name = None
+    username = None
 
-    email = models.EmailField(blank=True, null=True)
+    email = models.EmailField(unique=True)
+
+    REQUIRED_FIELDS = []
+    USERNAME_FIELD = 'email'
 
     def __str__(self):
         return self.email
