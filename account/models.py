@@ -7,7 +7,7 @@ class User(AbstractUser):
     email = models.EmailField(blank=True, null=True)
 
     def __str__(self):
-        return self.username
+        return self.email
 
     def __init__(self, *args, **kwargs):
         super(User, self).__init__(*args, **kwargs)
