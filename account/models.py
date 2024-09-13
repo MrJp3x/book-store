@@ -2,11 +2,6 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
-class UserConst(models.TextChoices):
-    NORMAL = 'normal', 'User'
-    PUBLISHER = 'publisher', 'Book Publisher'
-
-
 class User(AbstractUser):
 
     role = models.CharField(max_length=20, choices=UserConst.choices)
@@ -32,4 +27,3 @@ class User(AbstractUser):
         ]
         default_permissions = ()
         swappable = 'AUTH_USER_MODEL'
-        unique_together = [['username']]
