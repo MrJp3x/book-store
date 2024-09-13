@@ -13,9 +13,6 @@ class User(AbstractUser):
         super(User, self).__init__(*args, **kwargs)
         self.is_admin = False
 
-    def save(self, *args, **kwargs):
-        self.is_admin = self.role == UserConst.PUBLISHER
-        super(User, self).save(*args, **kwargs)
 
     class Meta:
         permissions = [
