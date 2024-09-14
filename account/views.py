@@ -10,3 +10,6 @@ class Register(generics.CreateAPIView):
     def perform_create(self, serializer):
         serializer.save()
         return Response({'detail': 'User registered.'}, status=status.HTTP_201_CREATED)
+
+
+
