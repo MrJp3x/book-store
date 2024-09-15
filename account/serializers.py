@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.db.models import Q
 
-from account.models import User
+from account.models import User, Profile
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -34,3 +34,9 @@ class RegisterSerializer(serializers.ModelSerializer):
         validated_data.pop('confirm_password')
         user = User.objects.create(**validated_data)
         return user
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = '__all__'
