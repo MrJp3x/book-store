@@ -62,7 +62,7 @@ class User(AbstractUser):
 
 
 class Profile(TimeStamp):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=32)
     last_name = models.CharField(max_length=32)
     avatar = models.ImageField(upload_to=avatar_upload_path , null=True, blank=True)
