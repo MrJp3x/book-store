@@ -1,7 +1,9 @@
+from django.contrib.auth import authenticate
 from rest_framework import generics, status
-from rest_framework.response import Response
 from rest_framework.views import APIView
-
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework_simplejwt.tokens import RefreshToken
 from .models import Profile
 from .serializers import RegisterSerializer, ProfileSerializer
 
@@ -12,6 +14,26 @@ class Register(generics.CreateAPIView):
     def perform_create(self, serializer):
         serializer.save()
         return Response({'detail': 'User registered.'}, status=status.HTTP_201_CREATED)
+
+
+class LoginView(APIView):
+    def post(self, request):
+        email = request.data.get('email')
+        password = request.data.get('password')
+        user = authenticate(request, email=email, password=password)
+
+        print(f"User found: {user}")
+        print(f"Email: {email}")
+        print(f"Password: {password}")
+        print(f'my email: {request.data}')
+
+        if not user:
+            return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+        })
 
 
 class ProfileView(APIView):
@@ -40,8 +62,7 @@ class ProfileView(APIView):
         serializer = ProfileSerializer(profile, data=request.data, partial=True)
 
         if not serializer.is_valid():
-            return Response({"error":serializer.error_messages}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": serializer.error_messages}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer.save()
         return Response(serializer.data)
-
