@@ -22,11 +22,6 @@ class LoginView(APIView):
         password = request.data.get('password')
         user = authenticate(request, email=email, password=password)
 
-        print(f"User found: {user}")
-        print(f"Email: {email}")
-        print(f"Password: {password}")
-        print(f'my email: {request.data}')
-
         if not user:
             return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
         refresh = RefreshToken.for_user(user)
