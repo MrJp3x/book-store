@@ -3,11 +3,12 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 
-from account import views
+from .views import Register, LoginView, ProfileView
 
 urlpatterns = [
-    path('register/', views.Register.as_view(), name='register'),
-    path('profile/', views.ProfileView.as_view(), name='profile')
+    path('register/', Register.as_view(), name='register'),
+    path('login/', LoginView.as_view(), name='login'),
+    path('profile/', ProfileView.as_view(), name='profile'),
 ]
 
 if settings.DEBUG:
