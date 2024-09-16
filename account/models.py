@@ -1,9 +1,7 @@
-import os
-from django.utils.text import slugify
-from django.contrib.auth.models import AbstractUser
-from utils.models import TimeStamp
-from django.contrib.auth.models import BaseUserManager, AbstractUser
 from django.db import models
+from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import BaseUserManager, AbstractUser
+from utils.models import TimeStamp
 
 
 def avatar_upload_path(instance, filename):
