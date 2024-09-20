@@ -45,28 +45,28 @@ class LoginView(APIView):
 class PasswordResetRequestAPIView(APIView):
     def post(self, request, *args, **kwargs):
         form = PasswordResetForm(request.data)
-        if form.is_valid():
-            email = form.cleaned_data['email']
-            try:
-                user = User.objects.get(email=email)
-                user_id = user.id
+        if not form.is_valid():
+            return Response({'detail': 'Invalid data.'}, status=status.HTTP_400_BAD_REQUEST)
 
-                uid_bytes = str(user_id).encode('utf-8')
-                uidb64 = base64.b64encode(uid_bytes).decode('utf-8')
+        email = form.cleaned_data['email']
+        try:
+            user = User.objects.get(email=email)
+            user_id = user.id
 
-                token_generator = PasswordResetTokenGenerator()
-                token = token_generator.make_token(user)
+            uid_bytes = str(user_id).encode('utf-8')
+            uidb64 = base64.b64encode(uid_bytes).decode('utf-8')
 
-                return Response({'detail': f'uidb64: {uidb64}   token: {token}'}, status=status.HTTP_200_OK)
-            except User.DoesNotExist:
-                return Response({'detail': 'User not found. Redirect to register.'}, status=status.HTTP_404_NOT_FOUND)
-        return Response({'detail': 'Invalid data.'}, status=status.HTTP_400_BAD_REQUEST)
+            token_generator = PasswordResetTokenGenerator()
+            token = token_generator.make_token(user)
+
+            return Response({'uidb64': uidb64, 'token': token, }, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({'detail': 'User not found. Redirect to register.'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class PasswordResetConfirmAPIView(APIView):
     def post(self, request, uidb64, token, *args, **kwargs):
         try:
-            # Decode uidb64 to get the user ID
             user_id = urlsafe_base64_decode(uidb64).decode('utf-8')
             user = User.objects.get(id=user_id)
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
@@ -80,12 +80,13 @@ class PasswordResetConfirmAPIView(APIView):
         new_password = request.data.get('new_password')
         confirm_password = request.data.get('confirm_password')
 
-        if new_password == confirm_password:
-            user.password = make_password(new_password)
-            user.save()
-            return Response({'detail': 'Password updated successfully.'}, status=status.HTTP_200_OK)
-        else:
+        if new_password != confirm_password:
             return Response({'detail': 'Passwords do not match!'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.password = make_password(new_password)
+        user.save()
+        # TODO: Redirect to login page
+        return Response({'detail': 'Password updated successfully.'})
 
 
 #endregion
