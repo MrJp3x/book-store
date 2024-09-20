@@ -1,14 +1,20 @@
+import base64
 from django.contrib.auth import authenticate
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.utils.http import urlsafe_base64_decode
 from rest_framework import generics, status
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework_simplejwt.tokens import RefreshToken
-from .models import Profile
 from .serializers import RegisterSerializer, ProfileSerializer
+from .forms import PasswordResetForm
+from .models import Profile, User
 
 
-class Register(generics.CreateAPIView):
+# region login register
+
+class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
 
     def perform_create(self, serializer):
@@ -29,6 +35,63 @@ class LoginView(APIView):
             'refresh': str(refresh),
             'access': str(refresh.access_token),
         })
+
+
+#endregion
+
+
+# region password reset
+
+class PasswordResetRequestAPIView(APIView):
+    def post(self, request, *args, **kwargs):
+        form = PasswordResetForm(request.data)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            try:
+                user = User.objects.get(email=email)
+                user_id = user.id
+
+                uid_bytes = str(user_id).encode('utf-8')
+                uidb64 = base64.b64encode(uid_bytes).decode('utf-8')
+
+                token_generator = PasswordResetTokenGenerator()
+                token = token_generator.make_token(user)
+
+                return Response({'detail': f'uidb64: {uidb64}   token: {token}'}, status=status.HTTP_200_OK)
+            except User.DoesNotExist:
+                return Response({'detail': 'User not found. Redirect to register.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'detail': 'Invalid data.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PasswordResetConfirmAPIView(APIView):
+    def post(self, request, uidb64, token, *args, **kwargs):
+        try:
+            # Decode uidb64 to get the user ID
+            user_id = urlsafe_base64_decode(uidb64).decode('utf-8')
+            user = User.objects.get(id=user_id)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            return Response({'detail': 'User not found. Redirect to register.'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Check if the token is valid
+        token_generator = PasswordResetTokenGenerator()
+        if not token_generator.check_token(user, token):
+            return Response({'detail': 'Invalid or expired token.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        new_password = request.data.get('new_password')
+        confirm_password = request.data.get('confirm_password')
+
+        if new_password == confirm_password:
+            user.password = make_password(new_password)
+            user.save()
+            return Response({'detail': 'Password updated successfully.'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'detail': 'Passwords do not match!'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+#endregion
+
+
+#region profile
 
 
 class ProfileView(APIView):
@@ -61,3 +124,5 @@ class ProfileView(APIView):
 
         serializer.save()
         return Response(serializer.data)
+
+#endregion

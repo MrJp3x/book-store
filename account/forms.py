@@ -2,6 +2,10 @@ from django import forms
 from .models import User
 
 
+class PasswordResetForm(forms.Form):
+    email = forms.EmailField(label="Email", max_length=254)
+
+
 class UserCreationForm(forms.ModelForm):
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput)
