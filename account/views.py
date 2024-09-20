@@ -37,7 +37,7 @@ class LoginView(APIView):
         })
 
 
-#endregion
+# endregion
 
 
 # region password reset
@@ -89,10 +89,10 @@ class PasswordResetConfirmAPIView(APIView):
         return Response({'detail': 'Password updated successfully.'})
 
 
-#endregion
+# endregion
 
 
-#region profile
+# region profile
 
 
 class ProfileView(APIView):
@@ -126,4 +126,4 @@ class ProfileView(APIView):
         serializer.save()
         return Response(serializer.data)
 
-#endregion
+# endregion
