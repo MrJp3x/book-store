@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class BaseCategory(models.Model):
+class BookType(models.Model):
     name = models.CharField(max_length=100)
     parent = 'None'
 
@@ -12,7 +12,7 @@ class BaseCategory(models.Model):
 class Category(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
-    parent = models.ForeignKey('BaseCategory', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
+    book_type = models.ForeignKey('BookType', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
     sub_parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True,
                                    related_name='sub_categories')
 
@@ -26,12 +26,12 @@ class Category(models.Model):
         ancestors = []
         category = self
         print()
-        print(type(self.parent.name), self.parent, self.parent.name)
+        print(type(self.book_type.name), self.book_type, self.book_type.name)
         print()
-        while category.parent:
-            ancestors.insert(0, category.parent)
+        while category.book_type:
+            ancestors.insert(0, category.book_type)
             print(f'\ncategory self: {category}')
-            category = category.parent
+            category = category.book_type
             if category:
                 print(f'category in break: {category}')
 

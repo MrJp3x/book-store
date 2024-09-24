@@ -1,13 +1,13 @@
 from django.contrib import admin
-from .models import Category, BaseCategory
+from .models import Category, BookType
 
 
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name',
-                    'parent',
+                    'book_type',
                     'category_hierarchy'
                     ]
-    list_filter = ('parent',)
+    list_filter = ('book_type',)
     search_fields = ('name',)
 
     class Media:
@@ -35,12 +35,12 @@ class CategoryAdmin(admin.ModelAdmin):
         کوئری‌ست‌های پنل ادمین را سفارشی ‌سازی می‌کنیم تا کتگوری‌ها بر اساس سلسله‌مراتب مرتب شوند.
         """
         queryset = super().get_queryset(request)
-        return queryset.order_by('parent__id', 'id')
+        return queryset.order_by('book_type__id', 'id')
 
 
 class BaseCategoryAdmin(admin.ModelAdmin):
     list_display = ['name']
 
 
-admin.site.register(BaseCategory, BaseCategoryAdmin)
+admin.site.register(BookType, BaseCategoryAdmin)
 admin.site.register(Category, CategoryAdmin)
