@@ -11,18 +11,12 @@ class CategoryAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
     class Media:
-        """
-        اضافه کردن CSS سفارشی برای بهتر کردن نمایش سلسله‌مراتب.
-        """
         css = {
             'all': ('css/admin_custom.css',)
         }
     # list_display = BaseCategoryAdmin.list_display + ["category_hierarchy", 'id']
 
     def category_hierarchy(self, obj):
-        """
-        نمایش سلسله‌مراتبی کتگوری‌ها.
-        """
         ancestors = obj.get_ancestors()
         if ancestors:
             return ' > '.join([ancestor.name for ancestor in ancestors] + [obj.name])
@@ -31,9 +25,6 @@ class CategoryAdmin(admin.ModelAdmin):
     category_hierarchy.short_description = "Category Hierarchy"
 
     def get_queryset(self, request):
-        """
-        کوئری‌ست‌های پنل ادمین را سفارشی ‌سازی می‌کنیم تا کتگوری‌ها بر اساس سلسله‌مراتب مرتب شوند.
-        """
         queryset = super().get_queryset(request)
         return queryset.order_by('book_type__id', 'id')
 
