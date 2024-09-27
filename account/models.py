@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import BaseUserManager, AbstractUser
 from utils.models import TimeStamp
-from .const import sex_choice, user_type_choice, admin_type_choice
+from .const import SEX_CHOICES, USER_TYPE_CHOICES, ADMIN_TYPE_CHOICES
 
 
 def avatar_upload_path(instance, filename):
@@ -10,7 +10,7 @@ def avatar_upload_path(instance, filename):
       Generates the upload path for avatars based on the user's email.
 
       Args:
-          instance (AbstractBaseProfile): The instance of the profile model.
+          instance (BaseProfile): The instance of the profile model.
           filename (str): The original filename of the uploaded file.
 
       Returns:
@@ -90,7 +90,7 @@ class User(AbstractUser):
 
     email = models.EmailField(unique=True, null=True, blank=True)
     phone = models.CharField(max_length=14, unique=True, null=True, blank=True)
-    user_type = models.CharField(choices=user_type_choice, max_length=20, null=True, blank=True)
+    user_type = models.CharField(choices=USER_TYPE_CHOICES, max_length=20, null=True, blank=True)
 
     REQUIRED_FIELDS = []
     USERNAME_FIELD = 'email'
@@ -134,7 +134,7 @@ class User(AbstractUser):
 
 # region profile
 
-class AbstractBaseProfile(TimeStamp):
+class BaseProfile(TimeStamp):
     """
     Abstract base class for profiles with common fields and methods.
 
@@ -168,7 +168,7 @@ class AbstractBaseProfile(TimeStamp):
         abstract = True  # This class will not be created as a table in the database.
 
 
-class UserProfileAbstract(AbstractBaseProfile):
+class UserProfile(BaseProfile):
     """
     User profile abstract class with personal information.
 
@@ -180,7 +180,7 @@ class UserProfileAbstract(AbstractBaseProfile):
     """
     first_name = models.CharField(max_length=32)
     last_name = models.CharField(max_length=32)
-    sex = models.CharField(max_length=10, blank=True, null=True, choices=sex_choice)
+    sex = models.CharField(max_length=10, blank=True, null=True, choices=SEX_CHOICES)
     birth_date = models.DateField(blank=True, null=True)  # TODO: person calendar (jalali time)
 
     def __str__(self):
@@ -193,7 +193,7 @@ class UserProfileAbstract(AbstractBaseProfile):
         return f'{self.first_name} {self.last_name}'
 
 
-class PublisherProfileAbstract(AbstractBaseProfile):
+class PublisherProfile(BaseProfile):
     """
     Publisher profile abstract class with company-related fields.
 
@@ -220,7 +220,7 @@ class PublisherProfileAbstract(AbstractBaseProfile):
         return f'{self.company_name}'
 
 
-class AdminProfileAbstract(AbstractBaseProfile):
+class AdminProfile(BaseProfile):
     """
     Admin profile abstract class with administrative information.
 
@@ -235,8 +235,8 @@ class AdminProfileAbstract(AbstractBaseProfile):
     first_name = models.CharField(max_length=32)
     last_name = models.CharField(max_length=32)
     address = models.TextField(max_length=150, blank=True, null=True)
-    sex = models.CharField(max_length=10, blank=True, null=True, choices=sex_choice)
+    sex = models.CharField(max_length=10, blank=True, null=True, choices=SEX_CHOICES)
     birth_date = models.DateField(blank=True, null=True)  # TODO: person calendar (jalali time)
-    admin_type = models.CharField(choices=admin_type_choice, max_length=20, null=True, blank=True)
+    admin_type = models.CharField(choices=ADMIN_TYPE_CHOICES, max_length=20, null=True, blank=True)
 
 # endregion

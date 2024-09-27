@@ -1,7 +1,9 @@
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import RegisterView, LoginView, ProfileView, PasswordResetRequestAPIView, PasswordResetConfirmAPIView
+from .views import (RegisterView, LoginView,
+                    UserProfileView, PublisherProfileView, AdminProfileView,
+                    PasswordResetRequestAPIView, PasswordResetConfirmAPIView)
 
 
 urlpatterns = [
@@ -9,7 +11,9 @@ urlpatterns = [
     path('login/', LoginView.as_view(), name='login'),
     path('password-reset/', PasswordResetRequestAPIView.as_view(), name='password_reset'),
     path('reset/<uidb64>/<token>/', PasswordResetConfirmAPIView.as_view(), name='password_reset_confirm'),
-    path('profile/', ProfileView.as_view(), name='profile'),
+    path('profile/user/', UserProfileView.as_view(), name='user_profile'),
+    path('profile/publisher/', PublisherProfileView.as_view(), name='publisher_profile'),
+    path('profile/admin/', AdminProfileView.as_view(), name='admin_profile'),
 ]
 
 if settings.DEBUG:

@@ -1,7 +1,6 @@
-from rest_framework import serializers
 from django.db.models import Q
-
-from account.models import User, Profile
+from rest_framework import serializers
+from account.models import User, UserProfile, PublisherProfile, AdminProfile
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -36,7 +35,22 @@ class RegisterSerializer(serializers.ModelSerializer):
         return user
 
 
-class ProfileSerializer(serializers.ModelSerializer):
+# region Profile
+class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Profile
+        model = UserProfile
         fields = '__all__'
+
+
+class PublisherProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PublisherProfile
+        fields = '__all__'
+
+
+class AdminProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AdminProfile
+        fields = '__all__'
+
+# endregion
