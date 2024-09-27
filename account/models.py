@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import BaseUserManager, AbstractUser
 from utils.models import TimeStamp
-from .const import SEX_CHOICES, USER_TYPE_CHOICES, ADMIN_TYPE_CHOICES
+from .const import AccountConst
 
 
 def dynamic_upload_path(instance, filename):
@@ -83,7 +83,7 @@ class User(AbstractUser):
 
     email = models.EmailField(unique=True, null=True, blank=True)
     phone = models.CharField(max_length=14, unique=True, null=True, blank=True)
-    user_type = models.CharField(choices=USER_TYPE_CHOICES, max_length=20, null=True, blank=True)
+    user_type = models.CharField(choices=AccountConst.USER_TYPE_CHOICES, max_length=20, null=True, blank=True)
 
     REQUIRED_FIELDS = []
     USERNAME_FIELD = 'email'
@@ -173,7 +173,7 @@ class UserProfile(BaseProfile):
     """
     first_name = models.CharField(max_length=32)
     last_name = models.CharField(max_length=32)
-    sex = models.CharField(max_length=10, blank=True, null=True, choices=SEX_CHOICES)
+    sex = models.CharField(max_length=10, blank=True, null=True, choices=AccountConst.SEX_CHOICES)
     birth_date = models.DateField(blank=True, null=True)  # TODO: person calendar (jalali time)
 
     def __str__(self):
@@ -228,8 +228,8 @@ class AdminProfile(BaseProfile):
     first_name = models.CharField(max_length=32)
     last_name = models.CharField(max_length=32)
     address = models.TextField(max_length=150, blank=True, null=True)
-    sex = models.CharField(max_length=10, blank=True, null=True, choices=SEX_CHOICES)
+    sex = models.CharField(max_length=10, blank=True, null=True, choices=AccountConst.SEX_CHOICES)
     birth_date = models.DateField(blank=True, null=True)  # TODO: person calendar (jalali time)
-    admin_type = models.CharField(choices=ADMIN_TYPE_CHOICES, max_length=20, null=True, blank=True)
+    admin_type = models.CharField(choices=AccountConst.ADMIN_TYPE_CHOICES, max_length=20, null=True, blank=True)
 
 # endregion
