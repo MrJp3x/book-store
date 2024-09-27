@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
             name='AdminProfile',
             fields=[
                 ('timestamp_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='utils.timestamp')),
-                ('avatar', models.ImageField(blank=True, null=True, upload_to=account.models.avatar_upload_path)),
+                ('avatar', models.ImageField(blank=True, null=True, upload_to=account.models.dynamic_upload_path)),
                 ('first_name', models.CharField(max_length=32)),
                 ('last_name', models.CharField(max_length=32)),
                 ('address', models.TextField(blank=True, max_length=150, null=True)),
@@ -51,13 +51,13 @@ class Migration(migrations.Migration):
             name='PublisherProfile',
             fields=[
                 ('timestamp_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='utils.timestamp')),
-                ('avatar', models.ImageField(blank=True, null=True, upload_to=account.models.avatar_upload_path)),
+                ('avatar', models.ImageField(blank=True, null=True, upload_to=account.models.dynamic_upload_path)),
                 ('address', models.TextField(blank=True, null=True)),
                 ('publisher_manager', models.CharField(max_length=22)),
                 ('company_name', models.CharField(max_length=32)),
                 ('website', models.URLField()),
                 ('established_year', models.PositiveSmallIntegerField()),
-                ('publisher_logo', models.ImageField(blank=True, null=True, upload_to=account.models.avatar_upload_path)),
+                ('publisher_logo', models.ImageField(blank=True, null=True, upload_to=account.models.dynamic_upload_path)),
                 ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
             options={
@@ -69,7 +69,7 @@ class Migration(migrations.Migration):
             name='UserProfile',
             fields=[
                 ('timestamp_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='utils.timestamp')),
-                ('avatar', models.ImageField(blank=True, null=True, upload_to=account.models.avatar_upload_path)),
+                ('avatar', models.ImageField(blank=True, null=True, upload_to=account.models.dynamic_upload_path)),
                 ('address', models.TextField(blank=True, null=True)),
                 ('first_name', models.CharField(max_length=32)),
                 ('last_name', models.CharField(max_length=32)),
