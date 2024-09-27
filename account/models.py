@@ -5,27 +5,20 @@ from utils.models import TimeStamp
 from .const import SEX_CHOICES, USER_TYPE_CHOICES, ADMIN_TYPE_CHOICES
 
 
-def avatar_upload_path(instance, filename):
-    """
-      Generates the upload path for avatars based on the user's email.
-
-      Args:
-          instance (BaseProfile): The instance of the profile model.
-          filename (str): The original filename of the uploaded file.
-
-      Returns:
-          str: The generated upload path for the avatar.
-    """
+def dynamic_upload_path(instance, filename):
+    field_name = instance._meta.get_field(instance.field.name).name
     extension = filename.split('.')[-1]
     new_filename = f"{instance.user.email}.{extension}"
-    return f'media/avatar/{new_filename}'
+    return f'media/{field_name}/{new_filename}'
 
 
 # region user
+
 class CustomUserManager(BaseUserManager):
     """
     Custom user manager for creating regular and superusers.
     """
+
     def create_user(self, email, password=None, **extra_fields):
         """
         Creates and saves a regular user with the given email and password.
@@ -145,7 +138,7 @@ class BaseProfile(TimeStamp):
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
-    avatar = models.ImageField(upload_to=avatar_upload_path, null=True, blank=True)
+    avatar = models.ImageField(upload_to=dynamic_upload_path, null=True, blank=True)
     address = models.TextField(null=True, blank=True)
 
     def __str__(self):
@@ -208,7 +201,7 @@ class PublisherProfile(BaseProfile):
     company_name = models.CharField(max_length=32, blank=False, null=False)
     website = models.URLField(blank=False, null=False)
     established_year = models.PositiveSmallIntegerField(blank=False, null=False)
-    publisher_logo = models.ImageField(upload_to=avatar_upload_path, null=True, blank=True)
+    publisher_logo = models.ImageField(upload_to=dynamic_upload_path, null=True, blank=True)
 
     def __str__(self):
         """
