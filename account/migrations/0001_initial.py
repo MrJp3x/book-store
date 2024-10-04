@@ -44,7 +44,7 @@ class Migration(migrations.Migration):
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('first_name', models.CharField(max_length=32)),
                 ('last_name', models.CharField(max_length=32)),
-                ('avatar', models.ImageField(blank=True, null=True, upload_to=account.models.avatar_upload_path)),
+                ('avatar', models.ImageField(blank=True, null=True, upload_to=account.models.dynamic_upload_path)),
                 ('phone', models.CharField(blank=True, max_length=15, null=True)),
                 ('address', models.TextField(blank=True, null=True)),
                 ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
