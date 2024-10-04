@@ -1,20 +1,17 @@
 from django.contrib import admin
-from .models import Category, BookType
+from .models import Category, GeneralCategory
 
 
+@admin.register(GeneralCategory)
+class GeneralCategoryAdmin(admin.ModelAdmin):
+    list_display = ['name',]
+    search_fields = ['name',]
+
+
+@admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ['name',
-                    'book_type',
-                    'category_hierarchy'
-                    ]
-    list_filter = ('book_type',)
-    search_fields = ('name',)
-
-    class Media:
-        css = {
-            'all': ('css/admin_custom.css',)
-        }
-    # list_display = BaseCategoryAdmin.list_display + ["category_hierarchy", 'id']
+    list_display = ['name', 'sub_parent', 'category_hierarchy']
+    search_fields = ['name']
 
     def category_hierarchy(self, obj):
         ancestors = obj.get_ancestors()
@@ -24,14 +21,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
     category_hierarchy.short_description = "Category Hierarchy"
 
-    def get_queryset(self, request):
-        queryset = super().get_queryset(request)
-        return queryset.order_by('book_type__id', 'id')
-
-
-class BaseCategoryAdmin(admin.ModelAdmin):
-    list_display = ['name']
-
-
-admin.site.register(BookType, BaseCategoryAdmin)
-admin.site.register(Category, CategoryAdmin)
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "sub_parent":
+            kwargs["queryset"] = Category.objects.filter(sub_parent__isnull=True)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)

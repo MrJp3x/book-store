@@ -1,50 +1,66 @@
 from django.db import models
 
 
-class BookType(models.Model):
+class GeneralCategory(models.Model):
+    """
+     Represents a general category in the system.
+
+    Attributes:
+        name (str): The name of the general category.
+    """
+
     name = models.CharField(max_length=100)
-    parent = 'None'
 
     def __str__(self):
-        return self.name
-
+        return f'{self.name}'
 
 class Category(models.Model):
+    """
+    Represents a category in the system.
+
+    Attributes:
+        name (str): The name of the category.
+        description (str, optional): A brief description of the category. Defaults to None.
+        general_category (GeneralCategory): The associated general category for this category.
+        sub_parent (Category, optional): The parent category, used for nested categories. Defaults to None.
+    """
+
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
-    book_type = models.ForeignKey('BookType', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
-    sub_parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True,
-                                   related_name='sub_categories')
+    general_category = models.ForeignKey(GeneralCategory, on_delete=models.CASCADE)
+    sub_parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='sub_categories')
 
     def __str__(self):
         return f'{self.name}'
 
     def get_ancestors(self):
         """
-        Returns a list of ancestors for this category, starting from the root.
+        Retrieves the list of ancestor categories for the current category.
+
+        Iterates through the parent categories using the sub_parent field.
+
+        Returns:
+            list: A list of ancestor Category objects, ordered from root to the current category.
         """
+
         ancestors = []
         category = self
-        print()
-        print(type(self.book_type.name), self.book_type, self.book_type.name)
-        print()
-        while category.book_type:
-            ancestors.insert(0, category.book_type)
-            print(f'\ncategory self: {category}')
-            category = category.book_type
-            if category:
-                print(f'category in break: {category}')
-
-                break
-            print(f'category: {category}')
+        while category.sub_parent:
+            ancestors.insert(0, category.sub_parent)
+            category = category.sub_parent
         return ancestors
 
     def get_descendants(self):
         """
-        Returns a list of descendants for this category.
+        Retrieves the list of descendant categories for the current category.
+
+        Uses recursion to find all child categories under the current category.
+
+        Returns:
+            list: A list of descendant Category objects.
         """
         descendants = []
-        children = self.children.all()
+        children = self.sub_categories.all()
         for child in children:
             descendants.append(child)
             descendants.extend(child.get_descendants())
@@ -52,51 +68,3 @@ class Category(models.Model):
 
     class Meta:
         ordering = ['name']
-
-
-
-
-"""
-categories = {
-    "داستانی": "Fiction",
-    "غیر داستانی": "Non-fiction",
-    "علمی": "Science",
-    "تاریخی": "History",
-    "جامعه‌شناسی": "Sociology",
-    "مذهبی": "Religious",
-    "فلسفی": "Philosophy",
-    "آموزشی": "Educational",
-    "هنری": "Art",
-    "زندگی‌نامه": "Biography",
-    "کودک و نوجوان": "Children and Young Adult"
-}
-
-categories_descriptions = {
-    "داستانی": "کتاب‌هایی که داستان‌های تخیلی یا واقع‌گرا را روایت می‌کنند، از جمله رمان‌ها و داستان‌های کوتاه.",
-    "غیر داستانی": "کتاب‌هایی که بر مبنای واقعیت‌ها نوشته شده‌اند و به تحلیل یا توضیح مسائل واقعی می‌پردازند.",
-    "علمی": "کتاب‌هایی که به بررسی و توضیح علوم طبیعی، فیزیکی و ریاضی می‌پردازند.",
-    "تاریخی": "کتاب‌هایی که به مرور و بررسی وقایع تاریخی، زندگی‌نامه‌ها و تحلیل‌های تاریخی اختصاص دارند.",
-    "جامعه‌شناسی": "کتاب‌هایی که به مطالعه و تحلیل ساختارها و فرآیندهای اجتماعی، فرهنگی و رفتاری می‌پردازند.",
-    "مذهبی": "کتاب‌هایی که به موضوعات دینی، معنوی و مذهبی پرداخته و آموزه‌های مختلف دینی را بررسی می‌کنند.",
-    "فلسفی": "کتاب‌هایی که به بررسی مسائل بنیادین وجود، دانش، اخلاق و اندیشه‌های فلسفی اختصاص دارند.",
-    "آموزشی": "کتاب‌هایی که برای آموزش و یادگیری موضوعات مختلف طراحی شده‌اند، از جمله کتاب‌های درسی و راهنما.",
-    "هنری": "کتاب‌هایی که به موضوعات هنرهای تجسمی، موسیقی، ادبیات و دیگر شاخه‌های هنر اختصاص دارند.",
-    "زندگی‌نامه": "کتاب‌هایی که زندگی‌نامه‌ها و خاطرات افراد را روایت می‌کنند و به شرح تجربیات و دستاوردهای آنها می‌پردازند.",
-    "کودک و نوجوان": "کتاب‌هایی که مخصوص کودکان و نوجوانان نوشته شده و به آموزش، سرگرمی و پرورش خلاقیت آنها کمک می‌کنند."
-}
-
-
-
-
-
-"""
-
-
-
-
-
-
-
-
-
-
