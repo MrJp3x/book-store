@@ -81,7 +81,7 @@ class User(AbstractUser):
     last_name = None
     username = None
 
-    email = models.EmailField(unique=True, null=True, blank=True)
+    email = models.EmailField(unique=True, null=False, blank=False)
     phone = models.CharField(max_length=14, unique=True, null=True, blank=True)
     user_type = models.CharField(choices=AccountConst.USER_TYPE_CHOICES, max_length=20, null=True, blank=True)
 
