@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'product.apps.ProductConfig',
     'home_module.apps.HomeModuleConfig',
     'category.apps.CategoryConfig',
-    'utils.apps.UtilsConfig'
+    'utils.apps.UtilsConfig',
 ]
 
 MIDDLEWARE = [
