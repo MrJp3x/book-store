@@ -1,6 +1,7 @@
 from django.db import models
 from django.urls import reverse
 
+from account.models import User
 from utils.models import TimeStamp
 from category.models import Category
 
@@ -28,7 +29,8 @@ class Product(TimeStamp):
 
     Attributes:
         name (models.CharField): The name of the product.
-        product_type (models.ForeignKey): Product type of the product
+        created_by (models.ForeignKey): The user whose create the product.
+        product_type (models.ForeignKey): Product type of the product.
         price (models.FloatField): The price of the product.
         discount (models.FloatField): The discount on the product, if any.
         stock (models.PositiveIntegerField): The number of items available in stock.
@@ -39,6 +41,7 @@ class Product(TimeStamp):
     """
 
     name = models.CharField(max_length=100, unique=False, blank=False, null=False)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     product_type = models.ForeignKey(ProductType, on_delete=models.CASCADE)
     price = models.FloatField(blank=False, null=False)
     discount = models.FloatField(blank=True, null=True, default=0)
@@ -86,7 +89,7 @@ class Book(Product):
     publication_name = models.CharField(max_length=100, blank=True, null=True)
     categories = models.ForeignKey(Category, on_delete=models.CASCADE)
     slug = models.SlugField(max_length=200, unique=True, help_text="URL-friendly identifier for the book")
-    cover_image = models.ImageField(upload_to='book_covers/', help_text="Cover image of the book")
+    cover_image = models.ImageField(blank=True, upload_to='book_covers/', help_text="Cover image of the book")
     ISBN = models.CharField(max_length=25, blank=True, null=True)
     subject = models.CharField(max_length=250, blank=True, null=True)
 
