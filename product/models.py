@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MinValueValidator
 from django.urls import reverse
 
 from account.models import User
@@ -43,9 +44,9 @@ class Product(TimeStamp):
     name = models.CharField(max_length=100, unique=False, blank=False, null=False)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     product_type = models.ForeignKey(ProductType, on_delete=models.CASCADE)
-    price = models.FloatField(blank=False, null=False)
+    price = models.FloatField(blank=False, null=False, validators=[MinValueValidator(0)],)
     discount = models.FloatField(blank=True, null=True, default=0)
-    stock = models.PositiveIntegerField(default=0, help_text="Number of items in stock")
+    stock = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0)],help_text="Number of items in stock")
     description = models.TextField(blank=True, null=True)
     rating = models.FloatField(blank=True, null=True)
     is_available = models.BooleanField(default=True)
