@@ -2,25 +2,24 @@ from rest_framework import serializers
 from .models import ProductType, EBook, AudioBook, PhysicalBook
 
 
-class ProductTypeSerializer(serializers.ModelSerializer):
+class BaseBookSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = '__all__'
+        read_only_fields = ('id', 'created_at', 'updated_at')
+
+
+class ProductTypeSerializer(BaseBookSerializer):
     class Meta:
         model = ProductType
-        fields = '__all__'
 
-
-class EBookSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = EBook
-        fields = '__all__'
-
-
-class AudioBookSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = AudioBook
-        fields = '__all__'
-
-
-class PhysicalBookSerializer(serializers.ModelSerializer):
-    class Meta:
+class PhysicalBookSerializer(BaseBookSerializer):
+    class Meta(BaseBookSerializer.Meta):
         model = PhysicalBook
-        fields = '__all__'
+
+class EBookSerializer(BaseBookSerializer):
+    class Meta(BaseBookSerializer.Meta):
+        model = EBook
+
+class AudioBookSerializer(BaseBookSerializer):
+    class Meta(BaseBookSerializer.Meta):
+        model = AudioBook
