@@ -11,24 +11,24 @@ class ProductTypeViewSet(viewsets.ModelViewSet):
     search_fields = ['name']
 
 
-class PhysicalBookViewSet(viewsets.ModelViewSet):
-    queryset = PhysicalBook.objects.select_related('product_type').prefetch_related('categories').all()
+class BaseBookViewSet(viewsets.ModelViewSet):
+    filter_backends = [filters.SearchFilter]
+    filterset_fields = ['price', 'discount', 'stock', 'is_available']
+
+    def get_queryset(self):
+        return self.queryset.select_related('product_type').prefetch_related('categories').all()
+
+class PhysicalBookViewSet(BaseBookViewSet):
+    queryset = PhysicalBook.objects.all()
     serializer_class = PhysicalBookSerializer
-    filter_backends = [filters.SearchFilter]
     search_fields = ['name', 'author', 'translator', 'ISBN']
-    filterset_fields = ['price', 'discount', 'stock', 'is_available']
 
-
-class EBookViewSet(viewsets.ModelViewSet):
-    queryset = EBook.objects.select_related('product_type').prefetch_related('categories').all()
+class EBookViewSet(BaseBookViewSet):
+    queryset = EBook.objects.all()
     serializer_class = EBookSerializer
-    filter_backends = [filters.SearchFilter]
     search_fields = ['name', 'author', 'translator', 'ISBN', 'file_format']
-    filterset_fields = ['price', 'discount', 'stock', 'is_available']
 
-class AudioBookViewSet(viewsets.ModelViewSet):
-    queryset = AudioBook.objects.select_related('product_type').prefetch_related('categories').all()
+class AudioBookViewSet(BaseBookViewSet):
+    queryset = AudioBook.objects.all()
     serializer_class = AudioBookSerializer
-    filter_backends = [filters.SearchFilter]
     search_fields = ['name', 'author', 'narrator']
-    filterset_fields = ['price', 'discount', 'stock', 'is_available']
