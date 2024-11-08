@@ -5,6 +5,7 @@ from django.urls import reverse
 from account.models import User
 from utils.models import TimeStamp
 from category.models import Category
+from .const import BookConst
 
 
 # region ProductType
@@ -115,7 +116,7 @@ class PhysicalBook(Book):
 
     weight = models.DecimalField(max_digits=5, decimal_places=2, help_text="Weight of the book in kilograms")
     dimensions = models.CharField(max_length=100, help_text="Dimensions of the book (e.g., 8x11x2 inches)")
-    cover_type = models.CharField(max_length=50, blank=True, null=True)
+    cover_type = models.CharField(max_length=20, choices=BookConst.COVER_TYPE_CHOICES)
     number_of_pages = models.IntegerField(blank=False, null=False)
 
     def __str__(self):
