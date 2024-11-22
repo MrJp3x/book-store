@@ -5,11 +5,17 @@ from utils.models import TimeStamp
 from .const import AccountConst
 
 
+# def dynamic_upload_path(instance, filename):
+#     field_name = instance._meta.get_field(instance.field.name).name
+#     extension = filename.split('.')[-1]
+#     new_filename = f"{instance.user.email}.{extension}"
+#     return f'media/{field_name}/{new_filename}'
+
 def dynamic_upload_path(instance, filename):
-    field_name = instance._meta.get_field(instance.field.name).name
+    # از نام کلاس به عنوان بخشی از مسیر استفاده می‌کنیم.
     extension = filename.split('.')[-1]
     new_filename = f"{instance.user.email}.{extension}"
-    return f'media/{field_name}/{new_filename}'
+    return f'media/{instance.__class__.__name__.lower()}/{new_filename}'
 
 
 # region user
@@ -137,6 +143,7 @@ class BaseProfile(TimeStamp):
         address (str): The address of the user.
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    id = models.AutoField(primary_key=True)
 
     avatar = models.ImageField(upload_to=dynamic_upload_path, null=True, blank=True)
     address = models.TextField(null=True, blank=True)
