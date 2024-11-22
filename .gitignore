@@ -5,6 +5,7 @@ env/
 *.zip
 *.sqlite*
 media/media/avatar/
+media/*
 t.py
 
 
