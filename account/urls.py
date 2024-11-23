@@ -1,7 +1,7 @@
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import (RegisterView, LoginView,
+from .views import (RegisterView, LoginView,CustomTokenRefreshView,
                     UserProfileView, PublisherProfileView, AdminProfileView,
                     PasswordResetRequestAPIView, PasswordResetConfirmAPIView)
 
@@ -9,6 +9,7 @@ from .views import (RegisterView, LoginView,
 urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
     path('login/', LoginView.as_view(), name='login'),
+    path('token/refresh/', CustomTokenRefreshView.as_view(), name='token_refresh'),
     path('password-reset/', PasswordResetRequestAPIView.as_view(), name='password_reset'),
     path('password-reset/<uidb64>/<token>/', PasswordResetConfirmAPIView.as_view(), name='password_reset_confirm'),
     path('profile/user/', UserProfileView.as_view(), name='user_profile'),

@@ -7,9 +7,35 @@ from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenRefreshView
+from rest_framework.permissions import AllowAny
 from .forms import PasswordResetForm
 from .serializers import (UserProfileSerializer, PublisherProfileSerializer, AdminProfileSerializer, RegisterSerializer)
 from .models import (UserProfile, PublisherProfile, AdminProfile, User)
+
+from rest_framework_simplejwt.views import TokenRefreshView
+from rest_framework.response import Response
+from rest_framework import status
+
+
+class CustomTokenRefreshView(TokenRefreshView):
+    """
+    Custom endpoint for refreshing tokens.
+    """
+
+    def post(self, request, *args, **kwargs):
+        """
+        Refresh the access token using the refresh token.
+        """
+        # Call the parent class's post method to handle token refreshing
+        response = super().post(request, *args, **kwargs)
+
+        # Custom behavior: Add a custom message or modify the response
+        if response.status_code == status.HTTP_200_OK:
+            response.data['message'] = "Token refreshed successfully!"
+
+        # Return the modified response
+        return Response(response.data, status=response.status_code)
 
 
 # region login register
