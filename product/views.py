@@ -1,7 +1,9 @@
 from rest_framework import viewsets, filters
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import ProductType, PhysicalBook, EBook, AudioBook
 from .serializers import ProductTypeSerializer, PhysicalBookSerializer, AudioBookSerializer, EBookSerializer
+from utils.product_search_filter import BookFilter, PhysicalBookFilter, EBookFilter, AudioBookFilter
 
 
 class ProductTypeViewSet(viewsets.ModelViewSet):
@@ -12,8 +14,11 @@ class ProductTypeViewSet(viewsets.ModelViewSet):
 
 
 class BaseBookViewSet(viewsets.ModelViewSet):
-    filter_backends = [filters.SearchFilter]
-    filterset_fields = ['price', 'discount', 'stock', 'is_available']
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_class = BookFilter
+    search_fields = ['name', 'author', 'description']
+    ordering_fields = ['price', 'rating', 'created_at']
+    ordering = ['created_at']
 
     def get_queryset(self):
         return self.queryset.select_related('product_type').prefetch_related('categories').all()
@@ -21,14 +26,17 @@ class BaseBookViewSet(viewsets.ModelViewSet):
 class PhysicalBookViewSet(BaseBookViewSet):
     queryset = PhysicalBook.objects.all()
     serializer_class = PhysicalBookSerializer
-    search_fields = ['name', 'author', 'translator', 'ISBN']
+    filterset_class = PhysicalBookFilter
 
 class EBookViewSet(BaseBookViewSet):
     queryset = EBook.objects.all()
     serializer_class = EBookSerializer
-    search_fields = ['name', 'author', 'translator', 'ISBN', 'file_format']
+    filterset_class = EBookFilter
+    search_fields = BaseBookViewSet.search_fields + ['file_format']
+
 
 class AudioBookViewSet(BaseBookViewSet):
     queryset = AudioBook.objects.all()
     serializer_class = AudioBookSerializer
-    search_fields = ['name', 'author', 'narrator']
+    filterset_class = AudioBookFilter
+    search_fields = BaseBookViewSet.search_fields + ['narrator']
