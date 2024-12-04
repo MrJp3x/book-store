@@ -1,6 +1,8 @@
 from django.db.models import Q
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from account.models import User, UserProfile, PublisherProfile, AdminProfile
+
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -29,9 +31,11 @@ class RegisterSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
-
         validated_data.pop('confirm_password')
-        user = User.objects.create(**validated_data)
+        password = validated_data.pop('password')
+        user = get_user_model()(**validated_data)
+        user.set_password(password)
+        user.save()
         return user
 
 
